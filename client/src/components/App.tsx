@@ -228,13 +228,29 @@ function handleLoginError(): void {
     });
 
     localStorage.setItem("token", data.token);
+
+    const response = await checkToken(data.token);
+
+    setCurrentUser((currentUser) => {
+      if (!currentUser) {
+        return currentUser;
+      }
+
+      return {
+        ...currentUser,
+        email: response.data.email,
+      };
+    });
+
     setIsLoggedIn(true);
+    navigate("/");
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
     handleLoginError();
   }
 };
-
 
 //borra el token y cambia la aplicación al estado de visitante
 const handleLogout = () => {

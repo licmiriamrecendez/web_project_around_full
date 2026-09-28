@@ -80,3 +80,27 @@
 .register__login-link:hover {
   opacity: 0.6;
 }
+
+.register__input_type_error {
+  border-bottom-color: #ff0000;
+}
+
+.register__error {
+  min-height: 14px;
+  margin-top: -25px;
+  margin-bottom: 16px;
+  color: #ff0000;
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.register__button:disabled {
+  background-color: #fff;
+  color: #000;
+  opacity: 0.2;
+  cursor: default;
+}
+
+.register__button:disabled:hover {
+  opacity: 0.2;
+}

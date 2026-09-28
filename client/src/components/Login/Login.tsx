@@ -7,48 +7,96 @@ type LoginProps = {
 function Login({ onLogin }: LoginProps): React.JSX.Element {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const handleEmailChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const input = event.target;
+
+    setEmail(input.value);
+    setEmailError(input.validationMessage);
+  };
+
+  const handlePasswordChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const input = event.target;
+
+    setPassword(input.value);
+    setPasswordError(input.validationMessage);
+  };
 
   const handleSubmit = (
-  event: React.FormEvent<HTMLFormElement>
-) => {
-  event.preventDefault();
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
 
-  onLogin(email, password);
+    if (!event.currentTarget.checkValidity()) {
+      return;
+    }
 
-};
+    onLogin(email, password);
+  };
 
-return (
-  <main className="login-page">
-  <div className="login">
-    <h2 className="login__title">Inicia sesión</h2>
+  const isFormValid =
+    email !== "" &&
+    password.length >= 6;
 
-    <form className="login__form" onSubmit={handleSubmit}>
-      <input
-        className="login__input"
-        type="email"
-        placeholder="Correo electrónico"
-        value={email}
-        onChange={(event) => setEmail(event.target.value)}
-        required
-      />
+  return (
+    <main className="login-page">
+      <div className="login">
+        <h2 className="login__title">Inicia sesión</h2>
 
-      <input
-        className="login__input"
-        type="password"
-        placeholder="Contraseña"
-        value={password}
-        onChange={(event) => setPassword(event.target.value)}
-        required
-      />
+        <form
+          className="login__form"
+          onSubmit={handleSubmit}
+          noValidate
+        >
+          <input
+            className={`login__input ${
+              emailError ? "login__input_type_error" : ""
+            }`}
+            type="email"
+            placeholder="Correo electrónico"
+            value={email}
+            onChange={handleEmailChange}
+            required
+          />
 
-      <button className="login__button" type="submit">
-        Iniciar sesión
-      </button>
-    </form>
+          <span className="login__error">
+            {emailError}
+          </span>
+
+          <input
+            className={`login__input ${
+              passwordError ? "login__input_type_error" : ""
+            }`}
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={handlePasswordChange}
+            minLength={6}
+            required
+          />
+
+          <span className="login__error">
+            {passwordError}
+          </span>
+
+          <button
+            className="login__button"
+            type="submit"
+            disabled={!isFormValid}
+          >
+            Iniciar sesión
+          </button>
+        </form>
       </div>
-  </main>
-);
+    </main>
+  );
 }
 
 export default Login;
