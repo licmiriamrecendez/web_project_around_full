@@ -15,17 +15,20 @@ const userSchema = new moongoose.Schema({
     type: String,
     minlength: 2,
     maxlength: 30,
-     required: true
+     required: true,
+    default: "Jacques Cousteau",
     },
   about: {
     type: String,
     minlength: 2,
      maxlength: 30,
      required: true,
+     default: "Explorador",
     },
   avatar: {
     type: String,
     required: true,
+    default: "https://practicum-content.s3.us-west-1.amazonaws.com/web-lat/avatar.jpg",
     validate: (value: string) => {
       return /^https?:\/\/(www\.)?[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+(?:\/[a-zA-Z0-9._~:/?%#[\]@!$&'()*+,;=-]*)?$/.test(
         value

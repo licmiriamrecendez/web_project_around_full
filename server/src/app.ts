@@ -1,36 +1,50 @@
+import "dotenv/config";
 import express from "express";
 import  router  from "./routes/index.js";
 import {errorHandler} from "./middleware/error-handler.js";
 import mongoose from "mongoose";
 import cors from "cors";
+import auth from "./middleware/auth.js";
+
+import dns from "node:dns";
+
+
+
+const MONGO_URI =
+  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/aroundb";
+
+dns.setServers(["8.8.8.8"]);
+
 
 mongoose
-.connect("mongodb://127.0.0.1:27017/aroundb")
-.then(() => {
-  console.warn("Conectado a MongoDB");
-})
-.catch((error) => {
-  console.error("Error de conexion:", error);
-});
+  .connect(MONGO_URI, { maxPoolSize: 10 })
+  .then(() => {
+    console.warn("Conectado a MongoDB");
+  })
+  .catch((error) => {
+    console.error("Error de conexión:", error);
+  });
 
 const app = express();
 
-const PORT = 3001
+app.set("trust proxy", 1);
 
-app.use(cors({ origin: "http://localhost:3000" }));
+const PORT = Number(process.env.PORT) || 3001;
+
+const CLIENT_ORIGIN =
+  process.env.CLIENT_ORIGIN || "http://localhost:3000";
+
+app.use(cors({ origin: CLIENT_ORIGIN }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "6a9ac7bd221ff565b454c386",
-  };
-
-  next();
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
 });
 
 app.use(router);
+
 
 app.use((req, res) => {
   res.status(404).json({ message: "Recurso solicitado no encontrado",
@@ -39,6 +53,4 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.warn(`Servidor ejecutandose en el puerto ${PORT}`);
-});
+export default app;

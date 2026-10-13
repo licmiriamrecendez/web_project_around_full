@@ -2,7 +2,6 @@ import { Router } from 'express';
 import {
   getUsers,
   getUserById,
-  createUser,
   getCurrentUser,
   updateUser,
   updateAvatar, } from '../controllers/users.js';
@@ -20,6 +19,5 @@ usersRouter.patch("/me/avatar", updateAvatar);
 
 usersRouter.get("/:id", getUserById);
 
-usersRouter.post("/", createUser);
 
 export { usersRouter };

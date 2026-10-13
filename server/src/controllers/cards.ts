@@ -74,17 +74,27 @@ export const dislikeCard = async (req: Request, res: Response) => {
   });
 };
 
+
 export const deleteCard = async (req: Request, res: Response) => {
   const { id } = req.params;
 
-  const card = await Card.findByIdAndDelete(id);
+  const card = await Card.findById(id);
 
   if (!card) {
-    throw Object.assign(
-      new Error("No se encontró ninguna tarjeta con ese id"),
-      { statusCode: 404 },
-    );
+    res.status(404).send({
+      message: "No se encontró ninguna tarjeta con ese id",
+    });
+    return;
   }
 
-  res.send(card);
+  if (card.owner.toString() !== req.user?._id?.toString()) {
+    res.status(403).send({
+      message: "No tienes permiso para eliminar esta tarjeta",
+    });
+    return;
+  }
+
+  await Card.findByIdAndDelete(id);
+
+  res.send({ message: "Tarjeta eliminada correctamente" });
 };

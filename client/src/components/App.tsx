@@ -8,7 +8,7 @@ import Login from "./Login/Login";
 import Register from "./Register/Register";
 
 import api from "../utils/api";
-import { signup, signin, checkToken} from "../utils/auth";
+import { signup, signin } from "../utils/auth";
 import CurrentUserContext from "../contexts/CurrentUserContext";
 import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import InfoTooltip from "./InfoTooltip/InfoTooltip";
@@ -38,8 +38,15 @@ const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
 const [infoTooltipMessage, setInfoTooltipMessage] = useState("");
 const [isInfoTooltipSuccess, setIsInfoTooltipSuccess] = useState(false);
 
-  // CARGAR USUARIO Y TARJETAS INICIALES
+ // RECUPERAR SESIÓN Y CARGAR DATOS
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setIsCheckingToken(false);
+      return;
+    }
+
     const loadInitialData = async () => {
       try {
         const [userData, initialCards] = await Promise.all([
@@ -49,45 +56,21 @@ const [isInfoTooltipSuccess, setIsInfoTooltipSuccess] = useState(false);
 
         setCurrentUser(userData);
         setCards(initialCards);
+        setIsLoggedIn(true);
       } catch (error) {
-        console.error("Error al cargar los datos iniciales:", error);
+        console.error("Error al recuperar la sesión:", error);
+
+        localStorage.removeItem("token");
+        setCurrentUser(null);
+        setCards([]);
+        setIsLoggedIn(false);
+      } finally {
+        setIsCheckingToken(false);
       }
     };
 
     loadInitialData();
   }, []);
-
- useEffect(() => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    return;
-  }
-
-  checkToken(token)
-    .then((response) => {
-      setIsLoggedIn(true);
-
-      setCurrentUser((currentUser) => {
-        if (!currentUser) {
-          return currentUser;
-        }
-
-        return {
-          ...currentUser,
-          email: response.data.email,
-        };
-      });
-    })
-    .catch((error) => {
-      console.error("Token inválido:", error);
-      localStorage.removeItem("token");
-      setIsLoggedIn(false);
-    })
-    .finally(() => {
-      setIsCheckingToken(false);
-    });
-}, []);
 
   function handleOpenPopup(popupConfig: PopupConfig): void {
     setPopup(popupConfig);
@@ -229,18 +212,13 @@ function handleLoginError(): void {
 
     localStorage.setItem("token", data.token);
 
-    const response = await checkToken(data.token);
+   
+const userData = await api.getUserInfo();
+const initialCards = await api.getInitialCards();
 
-    setCurrentUser((currentUser) => {
-      if (!currentUser) {
-        return currentUser;
-      }
+setCurrentUser(userData);
+setCards(initialCards);
 
-      return {
-        ...currentUser,
-        email: response.data.email,
-      };
-    });
 
     setIsLoggedIn(true);
     navigate("/");
@@ -253,10 +231,16 @@ function handleLoginError(): void {
 };
 
 //borra el token y cambia la aplicación al estado de visitante
+
 const handleLogout = () => {
   localStorage.removeItem("token");
   setIsLoggedIn(false);
+  setCurrentUser(null);
+  setCards([]);
+  setPopup(null);
+  navigate("/signin");
 };
+
 
 if (isCheckingToken) {
   return <></>;
