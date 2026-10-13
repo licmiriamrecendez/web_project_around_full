@@ -16,14 +16,20 @@ const MONGO_URI =
 dns.setServers(["8.8.8.8"]);
 
 
-mongoose
-  .connect(MONGO_URI, { maxPoolSize: 10 })
-  .then(() => {
-    console.warn("Conectado a MongoDB");
-  })
-  .catch((error) => {
-    console.error("Error de conexión:", error);
+
+export const connectDB = async (): Promise<void> => {
+  if (mongoose.connection.readyState === 1) {
+    return;
+  }
+
+  await mongoose.connect(MONGO_URI, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 10000,
   });
+
+  console.warn("Conectado a MongoDB");
+};
+
 
 const app = express();
 
