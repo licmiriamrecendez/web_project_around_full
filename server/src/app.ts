@@ -4,7 +4,7 @@ import  router  from "./routes/index.js";
 import {errorHandler} from "./middleware/error-handler.js";
 import mongoose from "mongoose";
 import cors from "cors";
-import auth from "./middleware/auth.js";
+
 
 import dns from "node:dns";
 
