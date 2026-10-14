@@ -151,6 +151,18 @@ export const updateAvatar = async (req: Request, res: Response) => {
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
+  if (
+    typeof email !== "string" ||
+    !email.trim() ||
+    typeof password !== "string" ||
+    !password
+  ) {
+    res.status(400).send({
+      message: "Email y password son obligatorios",
+    });
+    return;
+  }
+
   const user = await User.findOne({ email }).select("+password");
 
   if (!user) {
