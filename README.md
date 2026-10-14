@@ -133,7 +133,7 @@ Actualiza la fotografía de perfil del usuario autenticado.
 
 `GET /cards`
 
-Devuelve las tarjetas almacenadas en la base de datos.
+Devuelve únicamente las tarjetas que pertenecen al usuario autenticado, ordenadas desde la más reciente hasta la más antigua.
 
 `POST /cards`
 
