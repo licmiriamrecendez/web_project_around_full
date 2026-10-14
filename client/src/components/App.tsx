@@ -43,9 +43,11 @@ const [isInfoTooltipSuccess, setIsInfoTooltipSuccess] = useState(false);
     const token = localStorage.getItem("token");
 
     if (!token) {
-      setIsCheckingToken(false);
-      return;
-    }
+  Promise.resolve().then(() => {
+    setIsCheckingToken(false);
+  });
+  return;
+}
 
     const loadInitialData = async () => {
       try {
