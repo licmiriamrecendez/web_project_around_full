@@ -52,11 +52,42 @@
 @media screen and (max-width: 544px) {
   .header {
     min-height: 85px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 0;
+    box-sizing: border-box;
   }
 
   .header__logo {
     width: 126px;
     height: 24px;
     margin: 0 0 0 7px;
+  }
+
+  .header__user {
+    margin-left: 0;
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .header__email {
+    font-size: 14px;
+    line-height: 18px;
+    overflow-wrap: anywhere;
+    min-width: 0;
+  }
+
+  .header__logout {
+    font-size: 14px;
+    line-height: 18px;
+    flex-shrink: 0;
+  }
+
+  .header__auth-link {
+    font-size: 14px;
+    line-height: 18px;
   }
 }

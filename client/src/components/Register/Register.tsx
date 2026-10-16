@@ -24,13 +24,22 @@ function Register({
   };
 
   const handlePasswordChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const input = event.target;
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const input = event.target;
 
-    setPassword(input.value);
-    setPasswordError(input.validationMessage);
-  };
+  setPassword(input.value);
+
+  if (input.validity.valueMissing) {
+    setPasswordError("La contraseña es obligatoria.");
+  } else if (input.validity.tooShort) {
+    setPasswordError(
+      "La contraseña debe tener al menos 8 caracteres."
+    );
+  } else {
+    setPasswordError("");
+  }
+};
 
   const handleSubmit = (
     event: React.FormEvent<HTMLFormElement>
@@ -46,7 +55,7 @@ function Register({
 
   const isFormValid =
     email !== "" &&
-    password.length >= 6;
+    password.length >= 8;
 
   return (
     <main className="register-page">
@@ -81,7 +90,7 @@ function Register({
             placeholder="Contraseña"
             value={password}
             onChange={handlePasswordChange}
-            minLength={6}
+            minLength={8}
             required
           />
 
